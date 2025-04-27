@@ -5,23 +5,39 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class DesignProvider extends ChangeNotifier {
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool get isLoading => _isLoading;
   List<Design> _design = [];
-  List<Design> get design => _design;
-  Future<void> fetchDesign() async {
-    _isLoading = true;
-    notifyListeners();
-    final response =
-        await http.get(Uri.parse('https://api.tvmaze.com/shows/82/episodes'));
+  int _selectedSeason = 1;
+  List<Design> get design =>
+      _design.where((e) => e.season == _selectedSeason).toList();
+  int get selectedSeason => _selectedSeason;
 
-    if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body);
-      _design = data.map((json) => Design.fromJSon(json)).toList();
-    } else {
-      _design = [];
+  DesignProvider() {
+    fetchDesign();
+  }
+
+  Future<void> fetchDesign() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      final response =
+          await http.get(Uri.parse('https://api.tvmaze.com/shows/82/episodes'));
+
+      if (response.statusCode == 200) {
+        List data = jsonDecode(response.body);
+        _design = data.map((e) => Design.fromJSon(e)).toList();
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
+  }
+
+  void selectSeason(int season) {
+    _selectedSeason = season;
     notifyListeners();
   }
 }

@@ -1,32 +1,29 @@
 class Design {
   final int id;
   final String name;
-  final String url;
-  final String season;
-  final String type;
-  final String number;
-  final String airdate;
+  final int season;
+  final int number;
   final String summary;
+  final String imageUrl;
+  final String airdate;
   Design({
-    required this.name,
     required this.id,
-    required this.url,
+    required this.name,
     required this.season,
-    required this.type,
     required this.number,
-    required this.airdate,
     required this.summary,
+    required this.imageUrl,
+    required this.airdate,
   });
   factory Design.fromJSon(Map<String, dynamic> json) {
     return Design(
-      name: json['name'],
       id: json['id'],
-      url: json['image']['medium'],
+      name: json['name'],
       season: json['season'],
-      type: json['type'],
       number: json['number'],
-      airdate: json['airdate'],
-      summary: json['summary'],
+      summary: json['summary'] ?? '',
+      imageUrl: json['image'] != null ? json['image']['medium'] ?? '' : '',
+      airdate: json['airdate'] ?? '',
     );
   }
 }
